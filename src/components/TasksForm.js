@@ -29,7 +29,6 @@ const TasksForm = (props) => {
             setValues({})
         } else {
             const d = getLinkByid(props.currentId)
-            
         }
     }, [props.currentId])
     return (
