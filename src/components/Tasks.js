@@ -1,33 +1,41 @@
 import React, { useEffect, useState } from "react"
 import TasksForm from "./TasksForm"
 //metodos para incluir
-import { collection, addDoc, getDocs, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, deleteDoc, doc, setDoc, onSnapshot} from "firebase/firestore";
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
 const Tasks = () => {
-
     const [tasks, setTasks] = useState([]);
-    const [currentId, setCurrentId] = useState();
+    const [currentId, setCurrentId] = useState('');
     const addTask = async (taskObject) => {
         //Add
-        console.log(taskObject);
         try {
-            if (currentId === undefined) {
+            //Agrega
+            if (currentId === '' || currentId === undefined) {
                 await addDoc(collection(db, "tasks"),
                     taskObject
                 )
                 toast("Tarea Agregada", {
                     type: 'success'
                 })
+                //Limpiar datos
+                getTasks();
+            //Edita
             }else{
-                const docRef = doc(db, "tasks", currentId);
-                await setDoc(docRef, taskObject)
+
+                 const docRef = doc(db, "tasks", currentId);
+                 //editar
+                 await setDoc(docRef, taskObject)
                 toast("Tarea editada", {
                     type: 'info'
                 })
-                setCurrentId(undefined);
+                setCurrentId('');
+                console.log(currentId);
+                //Limpiar datos
+                getTasks();
+                console.log("editando")
             }
-            console.log("new task added")
+            
         } catch (error) {
             console.log("error en: ", error);
         }
@@ -37,12 +45,23 @@ const Tasks = () => {
 
     const getTasks = async () => {
         // debo hacer esto en tiempo real, por ahora lo dejo asi para poder avanzar mas
-        const tasks = await getDocs(collection(db, "tasks"));
-        const docs = [];
-        tasks.forEach((d) => {
-            docs.push({ ...d.data(), id: d.id })
-        })
-        setTasks(docs);
+        // const tasks = await getDocs(collection(db, "tasks"));
+        // const docs = [];
+        // tasks.forEach((d) => {
+        //     docs.push({ ...d.data(), id: d.id })
+        // })
+        
+        // setTasks(docs);
+        //en tiempo real
+        const dbRef = collection(db, "tasks");
+        const docus = [];
+        onSnapshot(dbRef, docsSnap  => {
+            docsSnap.forEach((doc) => {
+                docus.push({ ...doc.data(), id: doc.id})
+            });
+            setTasks(docus); 
+          });
+          
     }
 
     const onDeleteLink = async id => {
@@ -53,6 +72,7 @@ const Tasks = () => {
                 type: 'error',
                 autoClose: 2000
             })
+            getTasks();
         } else {
             toast("Tarea no eliminada", {
                 type: 'success'
@@ -71,6 +91,7 @@ const Tasks = () => {
             </div>
             <div className="col-md-8 p-2">
                 {tasks.map(task => (
+                    
                     <div key={task.id} className="card mb-1">
                         <div className="card-body">
                             <div className="d-flex justify-content-between">
@@ -96,7 +117,7 @@ const Tasks = () => {
 
                             <h5>{task.taskPersonal}</h5>
                             <p>{task.taskDescription}</p>
-                            <p>Status:</p>
+                            <p>Status:{task.taskStatus === true ? 'Finalizada':'Pendiente'}</p>
                         </div>
                     </div>
                 ))}

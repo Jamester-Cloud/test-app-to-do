@@ -4,31 +4,40 @@ import { doc, getDoc } from "firebase/firestore";
 
 const TasksForm = (props) => {
 
-    const [task, setValues] = useState({});
+    const [task, setValues] = useState({
+        task:'',
+        taskDescription:'',
+        taskPersonal:'',
+        taskStatus:false
+    });
 
     const handleInputChange = e => {
-        const { name, value } = e.target;
+        const target= e.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const name = target.name;
         setValues({ ...task, [name]: value });
+        //console.log(task);
     }
 
     const handleSubmit = e => {
 
         e.preventDefault();
+        console.log(task)
         props.addTask(task);
-        e.target.value = '';
+        
     }
 
     const getLinkByid = async id =>{
       const docRef = doc(db, 'tasks', id);
       const q = await getDoc(docRef);
-      console.log(q.data());
+      
       setValues({...q.data()});
     }
     useEffect(() => {
         if (props.currentId === undefined || props.currentId === '') {
             setValues({})
         } else {
-            const d = getLinkByid(props.currentId)
+            getLinkByid(props.currentId)
         }
     }, [props.currentId])
     return (
@@ -43,7 +52,7 @@ const TasksForm = (props) => {
                     placeholder="Asunto de la tareas"
                     name="task"
                     value={task.task}
-                    onChange={handleInputChange}
+                    onChange={ handleInputChange}
                 />
             </div>
             <div className="form-group input-group">
@@ -56,7 +65,7 @@ const TasksForm = (props) => {
                     placeholder="Escribe una nota personal sobre la tarea"
                     name="taskPersonal"
                     value={task.taskPersonal}
-                    onChange={handleInputChange}
+                    onChange={ handleInputChange}
                 />
             </div>
             <div className="form-group input-group">
@@ -66,21 +75,23 @@ const TasksForm = (props) => {
                     placeholder="Describe la tarea a realizar"
                     name="taskDescription"
                     value={task.taskDescription}
-                    onChange={handleInputChange}
+                    onChange={ handleInputChange}
                     rows={3}
                 />
             </div>
-            {/* <div className="form-group ">
+            <div className="form-group ">
                 <input
                     type="checkbox"
                     className="form-check-input ml-3"
                     name="taskStatus"
+                    onChange={handleInputChange}
+                    checked={task.taskStatus}
                 />
                 <label className="form-check-label" htmlFor="taskStatus">
                     Completada
                 </label>
-            </div> */}
-            <button className="btn btn-primary btn-block">{props.currentId === undefined ? 'Guardar':'Actualizar'}</button>
+            </div>
+            <button type="submit" className="btn btn-primary btn-block">{props.currentId === '' ? 'Guardar':'Actualizar'}</button>
         </form>
     )
 }
