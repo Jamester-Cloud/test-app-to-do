@@ -7,6 +7,7 @@ import { Home } from './components/Home';
 import { Login } from './components/Login';
 import { Register } from './components/Register';
 import { AuthProvider } from './context/authContex';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -14,7 +15,11 @@ function App() {
       <Routes>
         {/* <div className='container p-4'>
         <div className='row'> */}
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
         <Route path='/login' element={<Login />}></Route>
         <Route path='/register' element={<Register />}></Route>
         {/* <Tasks /> -> aun no, debo hacer los registros de usuario */}

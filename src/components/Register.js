@@ -34,7 +34,7 @@ export function Register() {
 
         <div>
             {error && <p>{error}</p>}
-            <form action="" onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
                 <label htmlFor="email">Email</label>
                 <input type="email" name="email" id="email" onChange={handleChange} />
 
