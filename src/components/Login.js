@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../context/authContex";
 import { useNavigate } from "react-router-dom";
+import Tasks from "./Tasks";
+//import {Tasks} from "../components/Tasks";
 export function Login() {
 
     const navigate = useNavigate();
@@ -43,6 +45,9 @@ export function Login() {
 
             </form>
 
+            {/* Lista publica */}
+            <h3>Aun puedes agregar tareas sin tener una cuenta</h3>
+            <Tasks></Tasks>
         </div>
     );
 }

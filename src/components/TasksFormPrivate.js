@@ -1,21 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { db } from '../firebase';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { useAuth } from "../context/authContex";
 
-const TasksForm = (props) => {
-
+const TasksFormPrivate = (props) => {
+    const [categories, setCategories] = useState([]);
+    const { user, loading } = useAuth();
+    
     const [task, setValues] = useState({
         task: '',
         taskDescription: '',
         taskPersonal: '',
+        taskIdCategory: '',
+        idUser:'',
         taskStatus: false
     });
 
+    const getCategories = async () => {
+        const tasks = await getDocs(collection(db, "categories"));
+        const docs = [];
+        tasks.forEach((d) => {
+            docs.push({ ...d.data(), id: d.id })
+        })
+        setCategories(docs);
+    }
+
     const handleInputChange = e => {
         const target = e.target;
+        //detectar tipo de input select
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        setValues({ ...task, [name]: value });
+        setValues({ ...task, [name]: value, idUser: user.uid });
         
         console.log(task);
     }
@@ -28,21 +43,23 @@ const TasksForm = (props) => {
 
     }
 
-    const getTaskByid = async id => {
-        const docRef = doc(db, 'tasksPublic', id);
+    const getLinkByid = async id => {
+        const docRef = doc(db, 'tasks', id);
         const q = await getDoc(docRef);
+
         setValues({ ...q.data() });
     }
-
     useEffect(() => {
+        getCategories();
         if (props.currentId === undefined || props.currentId === '') {
             setValues({})
         } else {
-            getTaskByid(props.currentId)
+            getLinkByid(props.currentId)
         }
     }, [props.currentId])
     return (
-        <form onSubmit={handleSubmit} className="card card-body" action="">
+        <form onSubmit={handleSubmit} className="card card-body">
+            <input type="hidden" name="userId" onChange={handleInputChange} value={task.idUser} />
             <div className="form-group input-group">
                 <div className="input-group-text bg-light">
                     <i className="material-icons">archive</i>
@@ -68,6 +85,19 @@ const TasksForm = (props) => {
                     value={task.taskPersonal}
                     onChange={handleInputChange}
                 />
+            </div>
+            <div className="form-group input-group">
+                <div className="input-group-text bg-light">
+                    <i className="material-icons">assignment</i>
+                </div>
+                <select name="taskCategory" className="form-select" onChange={handleInputChange} id="taskCategory">
+                    <option value=""></option>
+                    {
+                        categories.map((cat)=>(
+                            <option key={cat.id} value={cat.id}>{cat.category}</option>
+                        ))
+                    }
+                </select>
             </div>
             <div className="form-group input-group">
                 <textarea
@@ -97,4 +127,4 @@ const TasksForm = (props) => {
     )
 }
 
-export default TasksForm;
+export default TasksFormPrivate;

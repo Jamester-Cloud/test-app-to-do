@@ -31,7 +31,6 @@ export function Register() {
     }
 
     return (
-
         <div>
             {error && <p>{error}</p>}
             <form onSubmit={handleSubmit}>
@@ -42,9 +41,7 @@ export function Register() {
                 <input type="password" name="pass" id="pass" onChange={handleChange} />
 
                 <button>Register</button>
-
             </form>
-
         </div>
     );
 }
