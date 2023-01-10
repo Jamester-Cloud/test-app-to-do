@@ -1,6 +1,10 @@
 import React from "react"
 import DataTable from 'react-data-table-component';
+import styled from 'styled-components';
+
 export const Datatable = (props) => {
+    //styles for textfield
+
     const ExpandedComponent = ({ data }) =>
         <pre className="text-primary">
             <p>Tarea:{data.task}</p>
@@ -59,8 +63,11 @@ export const Datatable = (props) => {
             }
         }
     ];
+
     return (
+
         <DataTable
+            title="Tareas"
             className="w-100"
             columns={columns}
             data={props.data}
