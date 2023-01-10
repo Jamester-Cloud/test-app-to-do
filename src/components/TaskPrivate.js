@@ -3,12 +3,12 @@ import TasksFormPrivate from "./TasksFormPrivate";
 import { useAuth } from "../context/authContex";
 import { Datatable } from "./datatables/Datatable";
 //metodos para incluir
-import { collection, addDoc, deleteDoc, doc, setDoc, onSnapshot, getDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, deleteDoc, doc, setDoc, getDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
 const TasksPrivate = () => {
     //User
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     //
     const [tasks, setTasks] = useState([]);
     const [currentId, setCurrentId] = useState('');
@@ -52,16 +52,13 @@ const TasksPrivate = () => {
         return category;
     }
     const getTasks = async () => {
-        //limpiando data
+        //limpiando el estado data
         setTasks([])
-
         //traer las tareas por usuario
         const q = query(collection(db, "tasks"), where("idUser", "==", user.uid));
         const querySnapshot = await getDocs(q);
         const docus = [];
         querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            //console.log(doc.id, " => ", doc.data());
             docus.push({ ...doc.data(), id: doc.id })
             docus.forEach(async (d) => {
                 const category = await getCustomCategorie(d.taskCategory);
@@ -70,22 +67,6 @@ const TasksPrivate = () => {
                 setTasks(docus);
             })
         });
-        //traer las tareas
-        // const dbRef = (collection(db, "tasks"), where("idUser", "==", user.uid));
-        // const docus = [];
-        // onSnapshot(dbRef, docsSnap => {
-        //     docsSnap.forEach(async (doc) => {
-        //         docus.push({ ...doc.data(), id: doc.id })
-        //     });
-        //     //imprimo en pantalla
-        //     docus.forEach(async (d) => {
-        //         const category = await getCustomCategorie(d.taskCategory);
-        //         const updateDocus = docus.findIndex((obj => obj.taskCategory === d.taskCategory))
-        //         docus[updateDocus].taskCategory = category;
-        //         setTasks(docus);
-        //     })
-        //     console.log(tasks);
-        // });
     }
 
     const onDeleteLink = async id => {
@@ -106,11 +87,12 @@ const TasksPrivate = () => {
 
     useEffect(() => {
         getTasks();
-
     }, [])
-
+    if (loading) return <h1>Cargando...</h1>
     return (
+        
         <>
+        
             <div className="col-md-4 p-2">
                 <TasksFormPrivate {...{ addTask, currentId, tasks }} />
             </div>

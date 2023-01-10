@@ -25,7 +25,7 @@ export const Datatable = (props) => {
             sortable: true,
         },
         {
-            name: 'Nota',
+            name: 'Nota Personal',
             selector: row => row.taskPersonal,
             sortable: true,
         },

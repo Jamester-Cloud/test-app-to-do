@@ -16,15 +16,18 @@ const TasksForm = (props) => {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         setValues({ ...task, [name]: value });
-        
-        console.log(task);
     }
 
     const handleSubmit = e => {
 
         e.preventDefault();
-        console.log(task)
         props.addTask(task);
+        setValues({
+            task: '',
+            taskDescription: '',
+            taskPersonal: '',
+            taskStatus: false
+        })
 
     }
 
@@ -52,7 +55,7 @@ const TasksForm = (props) => {
                     className="form-control"
                     placeholder="Asunto de la tareas"
                     name="task"
-                    value={task.task}
+                    value={task.task || ''}
                     onChange={handleInputChange}
                 />
             </div>
@@ -65,7 +68,7 @@ const TasksForm = (props) => {
                     className="form-control"
                     placeholder="Escribe una nota personal sobre la tarea"
                     name="taskPersonal"
-                    value={task.taskPersonal}
+                    value={task.taskPersonal || ''}
                     onChange={handleInputChange}
                 />
             </div>
@@ -75,7 +78,7 @@ const TasksForm = (props) => {
                     className="form-control"
                     placeholder="Describe la tarea a realizar"
                     name="taskDescription"
-                    value={task.taskDescription}
+                    value={task.taskDescription || ''}
                     onChange={handleInputChange}
                     rows={3}
                 />
@@ -86,7 +89,7 @@ const TasksForm = (props) => {
                     className="form-check-input ml-3"
                     name="taskStatus"
                     onChange={handleInputChange}
-                    checked={task.taskStatus}
+                    checked={task.taskStatus || ''}
                 />
                 <label className="form-check-label" htmlFor="taskStatus">
                     Completada

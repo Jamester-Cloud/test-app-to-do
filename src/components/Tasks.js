@@ -31,10 +31,8 @@ const Tasks = () => {
                     type: 'info'
                 })
                 setCurrentId('');
-                console.log(currentId);
                 //Limpiar datos
                 getTasks();
-                console.log("editando")
             }
             
         } catch (error) {
@@ -43,13 +41,7 @@ const Tasks = () => {
     } 
 
     const getTasks = async () => {
-        // debo hacer esto en tiempo real, por ahora lo dejo asi para poder avanzar mas
-        // const tasks = await getDocs(collection(db, "tasks"));
-        // const docs = [];
-        // tasks.forEach((d) => {
-        //     docs.push({ ...d.data(), id: d.id })
-        // })
-        // setTasks(docs);
+        setTasks([])
         //en tiempo real
         const dbRef = collection(db, "tasksPublic");
         const docus = [];
@@ -59,7 +51,6 @@ const Tasks = () => {
             });
             setTasks(docus); 
           });
-          
     }
 
     const onDeleteLink = async id => {

@@ -5,14 +5,14 @@ import { useAuth } from "../context/authContex";
 
 const TasksFormPrivate = (props) => {
     const [categories, setCategories] = useState([]);
-    const { user, loading } = useAuth();
-    
+    const { user } = useAuth();
+
     const [task, setValues] = useState({
         task: '',
         taskDescription: '',
         taskPersonal: '',
         taskIdCategory: '',
-        idUser:'',
+        idUser: '',
         taskStatus: false
     });
 
@@ -31,16 +31,21 @@ const TasksFormPrivate = (props) => {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         setValues({ ...task, [name]: value, idUser: user.uid });
-        
-        console.log(task);
     }
 
     const handleSubmit = e => {
 
         e.preventDefault();
-        console.log(task)
         props.addTask(task);
 
+        setValues({
+            task: '',
+            taskDescription: '',
+            taskPersonal: '',
+            idUser: '',
+            taskIdCategory: '',
+            taskStatus: false
+        });
     }
 
     const getLinkByid = async id => {
@@ -59,7 +64,7 @@ const TasksFormPrivate = (props) => {
     }, [props.currentId])
     return (
         <form onSubmit={handleSubmit} className="card card-body">
-            <input type="hidden" name="userId" onChange={handleInputChange} value={task.idUser} />
+            {/* <input type="hidden" name="userId" onChange={handleInputChange} value={task.idUser} /> */}
             <div className="form-group input-group">
                 <div className="input-group-text bg-light">
                     <i className="material-icons">archive</i>
@@ -69,7 +74,7 @@ const TasksFormPrivate = (props) => {
                     className="form-control"
                     placeholder="Asunto de la tareas"
                     name="task"
-                    value={task.task}
+                    value={task.task || ''}
                     onChange={handleInputChange}
                 />
             </div>
@@ -82,7 +87,7 @@ const TasksFormPrivate = (props) => {
                     className="form-control"
                     placeholder="Escribe una nota personal sobre la tarea"
                     name="taskPersonal"
-                    value={task.taskPersonal}
+                    value={task.taskPersonal || ''}
                     onChange={handleInputChange}
                 />
             </div>
@@ -90,10 +95,10 @@ const TasksFormPrivate = (props) => {
                 <div className="input-group-text bg-light">
                     <i className="material-icons">assignment</i>
                 </div>
-                <select name="taskCategory" className="form-select" onChange={handleInputChange} id="taskCategory">
+                <select name="taskCategory" value={task.taskIdCategory} className="form-select" onChange={handleInputChange} id="taskCategory">
                     <option value=""></option>
                     {
-                        categories.map((cat)=>(
+                        categories.map((cat) => (
                             <option key={cat.id} value={cat.id}>{cat.category}</option>
                         ))
                     }
@@ -101,11 +106,10 @@ const TasksFormPrivate = (props) => {
             </div>
             <div className="form-group input-group">
                 <textarea
-                    type="text"
                     className="form-control"
                     placeholder="Describe la tarea a realizar"
                     name="taskDescription"
-                    value={task.taskDescription}
+                    value={task.taskDescription || ''}
                     onChange={handleInputChange}
                     rows={3}
                 />
@@ -116,10 +120,10 @@ const TasksFormPrivate = (props) => {
                     className="form-check-input ml-3"
                     name="taskStatus"
                     onChange={handleInputChange}
-                    checked={task.taskStatus}
+                    checked={task.taskStatus || false}
                 />
                 <label className="form-check-label" htmlFor="taskStatus">
-                    Completada
+                    Finalizada
                 </label>
             </div>
             <button type="submit" className="btn btn-primary btn-block">{props.currentId === '' ? 'Guardar' : 'Actualizar'}</button>

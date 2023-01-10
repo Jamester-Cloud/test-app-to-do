@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../context/authContex";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Tasks from "./Tasks";
+import { Container } from "./Container";
+
 //import {Tasks} from "../components/Tasks";
 export function Login() {
 
@@ -25,29 +27,39 @@ export function Login() {
             navigate('/')
         } catch (err) {
             console.log(err.message)
-            
+
             setError(err.message);
         }
     }
 
     return (
+        <Container>
+            <div>
+                {error && <p>{error}</p>}
+                <div className="row justify-content-center">
+                    <div className="col-md-4">
+                        <form className="card card-body" onSubmit={handleSubmit}>
+                            <h2>Iniciar Sesion</h2>
+                            <label htmlFor="email">Email</label>
+                            <input type="email" className="form-control" name="email" id="email" onChange={handleChange} />
 
-        <div>
-            {error && <p>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email</label>
-                <input type="email" name="email" id="email" onChange={handleChange} />
+                            <label htmlFor="pass">Password</label>
+                            <input type="password" className="form-control" name="pass" id="pass" onChange={handleChange} />
 
-                <label htmlFor="pass">Password</label>
-                <input type="password" name="pass" id="pass" onChange={handleChange} />
+                            <button className="btn btn-primary btn-block mt-3">Login</button>
+                        </form>
+                        <Link to="/register">Registrate</Link>
+                    </div>
+                </div>
 
-                <button>Login</button>
+                {/* Lista publica */}
 
-            </form>
-
-            {/* Lista publica */}
-            <h3>Aun puedes agregar tareas sin tener una cuenta</h3>
-            <Tasks></Tasks>
-        </div>
+                <h3>Los usuarios registrados, tienen benefecios extras en la aplicacion, registrate ahora!</h3>
+                <p>Esta es una lista publica</p>
+                <div className="row">
+                    <Tasks></Tasks>
+                </div>
+            </div>
+        </Container>
     );
 }

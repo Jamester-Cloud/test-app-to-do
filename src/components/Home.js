@@ -18,9 +18,10 @@ export function Home() {
                 <h1>
                     Welcome {user.email}
                 </h1>
-                <h2>Mis listas:</h2>
-                <br />
+
                 <div className="row">
+                    <h2>Mis lista:</h2>
+                    {/*Estas en realidad son mis tareas, en mis listas, se debe asociar */}
                     <TaskPrivate></TaskPrivate>
                 </div>
             </Container>
