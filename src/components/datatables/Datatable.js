@@ -64,6 +64,7 @@ export const Datatable = (props) => {
             className="w-100"
             columns={columns}
             data={props.data}
+            noDataComponent="No hay nada que mostrar aqui :("
             expandableRows
             expandableRowsComponent={ExpandedComponent}
         />

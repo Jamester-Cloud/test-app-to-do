@@ -23,12 +23,6 @@ function App() {
         <Route path='/login' element={<Login />}></Route>
         <Route path='/listaTareas' element={<Tasks />}></Route>
         <Route path='/register' element={<Register />}></Route>
-        {/* <Tasks /> -> aun no, debo hacer los registros de usuario */}
-        {/* </div> */}
-
-        {/* Alertas */}
-         
-        {/* </div> */}
       </Routes>
       <ToastContainer />
     </AuthProvider>

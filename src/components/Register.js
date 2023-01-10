@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/authContex";
 import { useNavigate } from "react-router-dom";
+import { Container } from "./Container";
 export function Register() {
 
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ export function Register() {
             navigate('/')
         } catch (err) {
             console.log(err.message)
-            if (error.code === 'auth/internal-error'){
+            if (error.code === 'auth/internal-error') {
                 setError('Correo invalido')
             }
             setError(err.message);
@@ -31,17 +32,23 @@ export function Register() {
     }
 
     return (
-        <div>
-            {error && <p>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email</label>
-                <input type="email" name="email" id="email" onChange={handleChange} />
+        <Container>
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div>
+                        {error && <p>{error}</p>}
+                        <form className="card card-body" onSubmit={handleSubmit}>
+                            <label htmlFor="email">Email</label>
+                            <input type="email" className="form-control" name="email" id="email" onChange={handleChange} />
 
-                <label htmlFor="pass">Password</label>
-                <input type="password" name="pass" id="pass" onChange={handleChange} />
+                            <label htmlFor="pass">Password</label>
+                            <input type="password" className="form-control" name="pass" id="pass" onChange={handleChange} />
 
-                <button>Register</button>
-            </form>
-        </div>
+                            <button className="btn btn-primary">Registrarse</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </Container>
     );
 }

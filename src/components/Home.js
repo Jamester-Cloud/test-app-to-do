@@ -16,7 +16,7 @@ export function Home() {
         <>
             <Container>
                 <h1>
-                    Welcome {user.email}
+                    Bienvenid@ {user.email}
                 </h1>
 
                 <div className="row">
