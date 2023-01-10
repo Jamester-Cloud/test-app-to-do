@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react"
 import TasksFormPrivate from "./TasksFormPrivate";
+import { useAuth } from "../context/authContex";
+import { Datatable } from "./datatables/Datatable";
 //metodos para incluir
-import { collection, addDoc, deleteDoc, doc, setDoc, onSnapshot, getDoc, query, where } from "firebase/firestore";
+import { collection, addDoc, deleteDoc, doc, setDoc, onSnapshot, getDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
 const TasksPrivate = () => {
+    //User
+    const { user } = useAuth();
+    //
     const [tasks, setTasks] = useState([]);
     const [currentId, setCurrentId] = useState('');
     const addTask = async (taskObject) => {
@@ -41,44 +46,47 @@ const TasksPrivate = () => {
     }
 
     const getCustomCategorie = async (idCategory) => {
-        // const categoriesref = collection(db, "categories");
-
-        // const q = query(categoriesref, where("id", "==", idCategory));
-        // console.log(q);
         const docRef = doc(db, "categories", idCategory);
         const docSnap = await getDoc(docRef);
         const { category } = docSnap.data();
         return category;
-
     }
     const getTasks = async () => {
-        // debo hacer esto en tiempo real, por ahora lo dejo asi para poder avanzar mas
-        // const tasks = await getDocs(collection(db, "tasks"));
-        // const docs = [];
-        // tasks.forEach((d) => {
-        //     docs.push({ ...d.data(), id: d.id })
-        // })
+        //limpiando data
+        setTasks([])
 
-        // setTasks(docs);
-        //en tiempo real
-        const dbRef = collection(db, "tasks");
+        //traer las tareas por usuario
+        const q = query(collection(db, "tasks"), where("idUser", "==", user.uid));
+        const querySnapshot = await getDocs(q);
         const docus = [];
-        onSnapshot(dbRef, docsSnap => {
-            docsSnap.forEach(async (doc) => {
-                docus.push({ ...doc.data(), id: doc.id })
-            });
-            //imprimo en pantalla
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            //console.log(doc.id, " => ", doc.data());
+            docus.push({ ...doc.data(), id: doc.id })
             docus.forEach(async (d) => {
                 const category = await getCustomCategorie(d.taskCategory);
                 const updateDocus = docus.findIndex((obj => obj.taskCategory === d.taskCategory))
                 docus[updateDocus].taskCategory = category;
                 setTasks(docus);
             })
-            
         });
-        
+        //traer las tareas
+        // const dbRef = (collection(db, "tasks"), where("idUser", "==", user.uid));
+        // const docus = [];
+        // onSnapshot(dbRef, docsSnap => {
+        //     docsSnap.forEach(async (doc) => {
+        //         docus.push({ ...doc.data(), id: doc.id })
+        //     });
+        //     //imprimo en pantalla
+        //     docus.forEach(async (d) => {
+        //         const category = await getCustomCategorie(d.taskCategory);
+        //         const updateDocus = docus.findIndex((obj => obj.taskCategory === d.taskCategory))
+        //         docus[updateDocus].taskCategory = category;
+        //         setTasks(docus);
+        //     })
+        //     console.log(tasks);
+        // });
     }
-
 
     const onDeleteLink = async id => {
         if (window.confirm("Estas seguro de eliminar la tarea?")) {
@@ -106,8 +114,18 @@ const TasksPrivate = () => {
             <div className="col-md-4 p-2">
                 <TasksFormPrivate {...{ addTask, currentId, tasks }} />
             </div>
+
             <div className="col-md-8 p-2">
-                {/* filtros */}
+                <div className="card mb-1">
+                    <div className="card-body mb-1">
+                        <Datatable
+                            data={tasks}
+                            setCurrentId={setCurrentId}
+                            onDeleteLink={onDeleteLink}
+                        />
+                    </div>
+                </div>
+                {/* filtros
                 {tasks.map(task => (
 
                     <div key={task.id} className="card mb-1">
@@ -138,7 +156,7 @@ const TasksPrivate = () => {
                             <p>Status:{task.taskStatus === true ? 'Finalizada' : 'Pendiente'}</p>
                         </div>
                     </div>
-                ))}
+                ))} */}
             </div>
         </>
     )
